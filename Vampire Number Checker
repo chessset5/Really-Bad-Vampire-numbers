@@ -1,0 +1,103 @@
+
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+
+string isVampire(int n) {
+    string r = "Normal Number";
+    bool    neg, is_v = false;
+    if (n < 0)
+    {
+        n *= -1;
+        neg = true;
+    }
+    else
+        neg = false;
+    const string nsc = to_string(n);
+    string  ns, left, right;
+    int     rsl, sl = nsc.length();
+    char    tmp;
+
+    if (sl > 2)
+    {
+        for (int l1 = 0; !is_v && l1 < sl; l1++)
+        {
+            ns = nsc;
+            ns[0] = nsc[l1];
+            ns[l1] = nsc[0];
+            for (int l2 = 1; !is_v && l2 < sl; l2++)
+            {
+                for (int l3 = 1; !is_v && l3 < sl; l3++)
+                {
+                    left = ns.substr(0, l3);
+                    right = ns.substr(l3, sl - l3);
+                    rsl = right.length();
+                    if (left != "1" && left != "0" && right != "1" && right != "0")
+                    {
+                        for (int l4 = 0; !is_v && l4 < rsl; l4++)
+                        {
+                            if (((stoi(left)) * (stoi(right))) == n)
+                                is_v = true;
+                            if (l4 != rsl)
+                            {
+                                tmp = right[l4 + 1];
+                                right[l4 + 1] = right[l4];
+                                right[l4] = tmp;
+                            }
+                        }
+                    }
+                }
+                tmp = ns[1];
+                for (int l2 = 1; l2 < (sl - 1); l2++)
+                    ns[l2] = ns[l2 + 1];
+                ns[sl - 1] = tmp;
+            }
+        }
+        if (is_v)
+        {
+            if (ns.length() % 2)
+                r = "Pseudovampire | ";
+            else
+                r = "True Vampire | ";
+
+            if (neg)
+                r += "-";
+            r += left;
+            r += " * ";
+            r += right;
+            r += " = ";
+            if (neg)
+                r += "-";
+            r += nsc;
+        }
+    }
+    return r;
+}
+
+int main()
+{
+    bool bad = true;
+    int in;
+    string c;
+    do
+    {
+        cout << "Enter the number to be checked: ";
+        cin >> in;
+        if (cin.fail())
+        {
+            cin.clear();
+            cout << "\nInvalid Entry, try again.";
+            getline(cin, c);
+            cout << endl;
+        }
+        else
+            bad = false;
+    } while (bad);
+    cout << in << " is a " << isVampire(in) << endl;
+    getline(cin, c);
+    cout << "Press Enter to close";
+    getline(cin, c);
+}
