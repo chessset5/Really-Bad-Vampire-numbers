@@ -1,0 +1,134 @@
+#include <iostream>
+#include <fstream>
+#include <sstream>
+
+using namespace std;
+
+const string VIPS = "Vampire_Numbers.txt";
+
+string isVampire(int n);
+int find_last_int();
+bool is_dig(char c);
+
+
+string isVampire(int n) {
+    bool    is_v = false;
+    bool    neg = false;
+    if(n<0)
+    {
+        n *=-1;
+        neg = true;
+    }
+    const string nsc = to_string(n);
+    string  ns, left, right;
+    int     rsl, sl = nsc.length();
+    char    tmp;
+	string r = "Normal Number";
+  	if(sl>2);
+	{
+	  	for(int l1=0; !is_v && l1<sl; l1++)
+        {
+            ns = nsc;
+            ns[0] = nsc[l1];
+            ns[l1] = nsc[0];
+            for(int l2=1; !is_v && l2<sl; l2++)
+            {
+                for(int l3 =1; !is_v && l3<sl; l3++)
+                {
+                    left = ns.substr(0,l3);
+                    right = ns.substr(l3,sl-l3);
+                    rsl = right.length();
+                    if(left != "1" && left != "0")
+                    {
+                        for(int l4 =0; !is_v && l4<rsl; l4++)
+                        {
+                            if( ( (stoi(left)) * (stoi(right)) ) == n )
+                                is_v = true;
+                            if(l4!=rsl && !is_v)
+                            {
+                                tmp = right[l4+1];
+                                right[l4+1] = right[l4];
+                                right[l4] = tmp;
+                            }
+                        }
+                    }
+                }
+                tmp = ns[1];
+                for(int l2=1; l2<(sl-1); l2++)
+                    ns[l2] = ns[l2+1];
+                ns[sl-1] = tmp;
+            }
+        }
+	  	if(is_v)
+        {
+            if(ns.length()%2)
+			  r = "Pseudovampire\t";
+            else
+			  r = "True Vampire\t";
+            if(neg)
+            r+= '-';
+            r += nsc;
+            r += " = ";
+            if(neg)
+                r+= '-';
+            r += left;
+            r += " * ";
+            r += right;
+        }
+    }
+  	return r;
+}
+
+bool is_dig(char c)
+{
+    return (c<='9' && c>='0');
+
+}
+
+int find_last_int()
+{
+    int last =0;
+    int lpos =0;
+    string n,strlast;
+    ifstream fin(VIPS);
+    if(fin.is_open())
+    {
+        cout << "Found file!" << endl;
+        getline(fin,n);
+        while(!fin.eof())
+        {
+            strlast = n;
+            getline(fin,n);
+        }
+        cout << strlast << endl;
+        stringstream ss;
+        ss << strlast;
+        ss >> n;
+        ss >> last;
+    }
+    fin.close();
+    return last;
+}
+
+void output(int a)
+{
+    string vn="";
+    ofstream fout(VIPS, ios::app);
+    while(a < 2147483647)
+    {
+        vn = isVampire(++a);
+        if(vn != "Normal Number")
+        {
+            cout << "Found " << vn << '\n';
+            fout << vn << endl;
+        }
+    }
+    fout.close();
+}
+
+int main()
+{
+    int last_int = find_last_int();
+    output(last_int);
+    return 0;
+}
